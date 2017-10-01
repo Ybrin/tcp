@@ -40,7 +40,7 @@ DispatchQueue.global(qos: .background).async {
     while shouldPoll {
         // print("::: Reading next line! :::")
         do {
-            let bytes = try tcp.readAll()
+            let bytes = try tcp.read(max: 10)
 
             let line = String(bytes: bytes)
             // print("::: NEXT LINE IS :::")
