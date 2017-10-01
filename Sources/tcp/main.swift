@@ -30,5 +30,51 @@ guard let host = result["<host>"] as? String, let portStr = result["<port>"] as?
 }
 
 let tcp = try TCPInternetSocket(scheme: "stratum+tcp", hostname: host, port: port)
-
 try tcp.connect()
+
+var shouldPoll = true
+var shouldRead = true
+
+// Polling
+DispatchQueue.global(qos: .background).async {
+    while shouldPoll {
+        // print("::: Reading next line! :::")
+        do {
+            let bytes = try tcp.readAll()
+
+            let line = String(bytes: bytes)
+            // print("::: NEXT LINE IS :::")
+            print(line, terminator: "")
+        } catch {
+            print("::: Read failed... :::")
+            print(error)
+            sleep(1)
+            continue
+        }
+        sleep(1)
+    }
+}
+
+// Writing
+var inLine: UnsafeMutablePointer<Int8>?
+let lineCapp: UnsafeMutablePointer<Int> = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+while shouldRead {
+    print("TCP Input> ", terminator: "")
+    getline(&inLine, lineCapp, stdin)
+    guard let line = inLine else {
+        print("::: Could not read input :::")
+        continue
+    }
+    let str = String(cString: line)
+
+    // print("::: READ LINE :::")
+    // print(str)
+
+    do {
+        let bytes = try tcp.write(str.makeBytes())
+        print("Bytes written: \(bytes)")
+    } catch {
+        print("::: Write failed :::")
+        print(error)
+    }
+}
