@@ -29,6 +29,8 @@ guard let host = result["<host>"] as? String, let portStr = result["<port>"] as?
     exit(1)
 }
 
+let cli = CLI(prefix: "TCP Input")
+
 let tcp = try TCPInternetSocket(scheme: "stratum+tcp", hostname: host, port: port)
 try tcp.connect()
 
@@ -40,15 +42,16 @@ DispatchQueue.global(qos: .background).async {
     while shouldPoll {
         // print("::: Reading next line! :::")
         do {
-            let bytes = try tcp.read(max: 10)
+            let bytes = try tcp.readUnixLine()
 
             let line = String(bytes: bytes)
             // print("::: NEXT LINE IS :::")
-            print(line, terminator: "")
+            cli.print(color: .blue, string: line)
         } catch {
             print("::: Read failed... :::")
             print(error)
             sleep(1)
+            exit(1)
             continue
         }
         sleep(1)
@@ -59,10 +62,9 @@ DispatchQueue.global(qos: .background).async {
 var inLine: UnsafeMutablePointer<Int8>?
 let lineCapp: UnsafeMutablePointer<Int> = UnsafeMutablePointer<Int>.allocate(capacity: 1)
 while shouldRead {
-    print("TCP Input> ", terminator: "")
     getline(&inLine, lineCapp, stdin)
     guard let line = inLine else {
-        print("::: Could not read input :::")
+        cli.print(color: .red, string: "::: Could not read input :::")
         continue
     }
     let str = String(cString: line)
@@ -72,9 +74,10 @@ while shouldRead {
 
     do {
         let bytes = try tcp.write(str.makeBytes())
-        print("Bytes written: \(bytes)")
+        cli.print("Bytes written: \(bytes)")
     } catch {
         print("::: Write failed :::")
         print(error)
+        exit(1)
     }
 }
