@@ -17,11 +17,11 @@ class CLI {
     }
 
     private func generatePrefix() {
-        Swift.print("\(prefix)>", terminator: "")
+        Swift.print("\(prefix)> ", terminator: "")
     }
 
     private func removePrefix() {
-        Swift.print("33[2K\r")
+        Swift.print("\u{001B}[2K\r")
     }
 
     func print(_ str: String) {
@@ -34,5 +34,18 @@ class CLI {
         removePrefix()
         Swift.print(color + string + ANSIColor.reset)
         generatePrefix()
+    }
+
+    func getLine() -> String? {
+        var inLine: UnsafeMutablePointer<Int8>?
+        getline(&inLine, lineCapp, stdin)
+
+        generatePrefix()
+
+        guard let inLinePtr = inLine else {
+            return nil
+        }
+
+        return String(cString: inLinePtr)
     }
 }

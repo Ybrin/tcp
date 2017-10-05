@@ -59,21 +59,18 @@ DispatchQueue.global(qos: .background).async {
 }
 
 // Writing
-var inLine: UnsafeMutablePointer<Int8>?
 let lineCapp: UnsafeMutablePointer<Int> = UnsafeMutablePointer<Int>.allocate(capacity: 1)
 while shouldRead {
-    getline(&inLine, lineCapp, stdin)
-    guard let line = inLine else {
+    guard let line = cli.getLine() else {
         cli.print(color: .red, string: "::: Could not read input :::")
         continue
     }
-    let str = String(cString: line)
 
     // print("::: READ LINE :::")
     // print(str)
 
     do {
-        let bytes = try tcp.write(str.makeBytes())
+        let bytes = try tcp.write(line.makeBytes())
         cli.print("Bytes written: \(bytes)")
     } catch {
         print("::: Write failed :::")
