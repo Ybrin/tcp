@@ -1,5 +1,8 @@
 import Foundation
 import Sockets
+#if os(Linux)
+    import Dispatch
+#endif
 
 let programName = CommandLine.arguments.first ?? "tcp"
 let help = """
