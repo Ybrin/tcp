@@ -59,12 +59,10 @@ DispatchQueue.global(qos: .background).async {
 }
 
 // Writing
-let lineCapp: UnsafeMutablePointer<Int> = UnsafeMutablePointer<Int>.allocate(capacity: 1)
 while shouldRead {
-    guard let line = cli.getLine() else {
-        cli.print(color: .red, string: "::: Could not read input :::")
-        continue
-    }
+    Thread.sleep(forTimeInterval: 0.1)
+    let line = cli.getLine()
+    // cli.print(color: .red, string: "::: Could not read input :::")
 
     // print("::: READ LINE :::")
     // print(str)

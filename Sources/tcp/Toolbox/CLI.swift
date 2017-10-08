@@ -36,16 +36,22 @@ class CLI {
         generatePrefix()
     }
 
-    func getLine() -> String? {
-        var inLine: UnsafeMutablePointer<Int8>?
-        getline(&inLine, lineCapp, stdin)
+    func getLine() -> String {
+        var string = ""
+        while string.characters.last != "\n" {
+            let lineCapp: Int32 = 1024
+            let inLine: UnsafeMutablePointer<Int8> = UnsafeMutablePointer<Int8>.allocate(capacity: 1024)
+            // getline(&inLine, &lineCapp, stdin)
+
+            fgets(inLine, lineCapp, stdin)
+
+            string += String(cString: inLine)
+
+            inLine.deallocate(capacity: 1024)
+        }
 
         generatePrefix()
 
-        guard let inLinePtr = inLine else {
-            return nil
-        }
-
-        return String(cString: inLinePtr)
+        return string
     }
 }
