@@ -1,5 +1,4 @@
 import Foundation
-import Docopt
 import Sockets
 
 let programName = CommandLine.arguments.first ?? "tcp"
@@ -22,10 +21,22 @@ if arguments.count > 0 {
     arguments.remove(at: 0)
 }
 
-let result = Docopt.parse(help, argv: arguments, help: true, version: "1.0")
+if arguments.contains("-h") || arguments.contains("--help") {
+    print(help)
+    exit(0)
+}
 
-guard let host = result["<host>"] as? String, let portStr = result["<port>"] as? String, let port = UInt16(portStr) else {
-    print("Docopt failed. Consider opening an issue on Github.")
+guard arguments.count == 2 else {
+    print(help)
+    exit(1)
+}
+
+let host = arguments[0]
+let portStr = arguments[1]
+guard let port = UInt16(portStr) else {
+    print("Port must be a UInt16 compatible type")
+    print()
+    print(help)
     exit(1)
 }
 

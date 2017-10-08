@@ -29,15 +29,6 @@
         }
       },
       {
-        "package": "Docopt",
-        "repositoryURL": "https://github.com/Ybrin/docopt.swift.git",
-        "state": {
-          "branch": null,
-          "revision": "ecaafc09010a8705eee5a1272c4642c1776b6f53",
-          "version": "0.7.4"
-        }
-      },
-      {
         "package": "Sockets",
         "repositoryURL": "https://github.com/vapor/sockets.git",
         "state": {
